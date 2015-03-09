@@ -80,8 +80,8 @@ void write_position(int x, int y)
 {
   vga_led_arg_t vla;  
   printf("BALL POSITION (%d, %d)\n", x, y);
-  vla.x = x;
-  vla.y = y;
+  vla.x = (u16) x;
+  vla.y = (u16) y;
 
   if (ioctl(vga_led_fd, VGA_LED_DRAW_BALL, &vla))
   {

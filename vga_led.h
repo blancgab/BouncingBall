@@ -9,8 +9,8 @@
 #define Y_MIN 0
 
 typedef struct {
-  int x;  
-  int y;
+  u16 x;  
+  u16 y;
 } vga_led_arg_t;
 
 #define VGA_LED_MAGIC 'q'

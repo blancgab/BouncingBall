@@ -41,20 +41,22 @@
  */
 struct vga_led_dev 
 {
-  struct resource res;          /* Resource: our registers */
-  void __iomem *virtbase;       /* Where registers can be accessed in memory */
-  int coordinates[2];           /* 2 Element Array of x & y coordinates */
+    struct resource res;          /* Resource: our registers */
+    void __iomem *virtbase;       /* Where registers can be accessed in memory */
+    int coordinates[2];           /* 2 Element Array of x & y coordinates */
 } dev;
 
 /*
  * Write segments of a single digit
  * Assumes digit is in range and the device information has been set up
  */
-static void draw_ball(int x, int y)
+static void write_coordinates(int x, int y)
 {  
-  int c[2] = {x,y};
-  iowrite8(c, dev.virtbase);
-  dev.coordinates = c;
+    iowrite16((u16)x, dev.virtbase);
+    iowrite16((u16)y, dev.virtbase + 2);
+
+    dev.coordinate[0] = x;
+    dev.coordinate[1] = y;
 }
 
 /*
@@ -65,21 +67,21 @@ static void draw_ball(int x, int y)
 static long 
 vga_led_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 {
-  vga_led_arg_t vla;
-  
-  switch (cmd) 
-  {
-    case VGA_LED_DRAW_BALL:
-      if (copy_from_user(&vla, (vga_led_arg_t *) arg, sizeof(vga_led_arg_t)))
-	return -EACCES;
-      draw_ball(vla.x, vla.y);
-      break;
+    vga_led_arg_t vla;
     
+    switch (cmd) 
+    {
+    case VGA_LED_DRAW_BALL:
+	if (copy_from_user(&vla, (vga_led_arg_t *) arg, sizeof(vga_led_arg_t)))
+	    return -EACCES;
+	write_coordinates(vla.x, vla.y);
+	break;
+	
     default:
-      return -EINVAL;
-  }
-  
-  return 0;
+	return -EINVAL;
+    }
+    
+    return 0;
 }
 
 /* The operations our device knows how to do */
@@ -128,7 +130,7 @@ static int __init vga_led_probe(struct platform_device *pdev)
 	}
 
 	/* Plot Static Ball*/
-	draw_ball(200,200);
+	write_coordinates(200,200);
 	  
 	return 0;
 
