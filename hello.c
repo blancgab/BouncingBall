@@ -52,7 +52,7 @@ int main()
 {
   vga_led_arg_t vla;
   int i;
-  static const char filename[] = "/dev/vgaled";
+  static const char filename[] = "/dev/vga_led";
 
   static unsigned char message[8] = { 0x39, 0x6D, 0x79, 0x79,
 				      0x66, 0x7F, 0x66, 0x3F };

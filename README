@@ -13,3 +13,12 @@ lsmod
 ./hello
 
 rmmod vga_led
+
+Once the module is loaded, look for information about it with
+
+lsmod
+cat /proc/iomem
+ls /sys/module/vga_led
+ls /sys/devices/soc.0
+ls /sys/class/misc/vga_led
+ls /sys/bus/drivers

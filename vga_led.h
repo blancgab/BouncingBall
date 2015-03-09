@@ -10,8 +10,10 @@ typedef struct {
   unsigned char segments; /* LSB is segment a, MSB is decimal point */
 } vga_led_arg_t;
 
+#define VGA_LED_MAGIC 'q'
+
 /* ioctls and their arguments */
-#define VGA_LED_WRITE_DIGIT _IOW('q', 1, vga_led_arg_t *)
-#define VGA_LED_READ_DIGIT  _IOR('q', 2, vga_led_arg_t *)
+#define VGA_LED_WRITE_DIGIT _IOW(VGA_LED_MAGIC, 1, vga_led_arg_t *)
+#define VGA_LED_READ_DIGIT  _IOWR(VGA_LED_MAGIC, 2, vga_led_arg_t *)
 
 #endif
