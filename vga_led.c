@@ -101,7 +101,7 @@ static struct miscdevice vga_led_misc_device = {
  */
 static int __init vga_led_probe(struct platform_device *pdev)
 {
-	int i, ret;
+	int ret;
 
 	/* Register ourselves as a misc device: creates /dev/vga_led */
 	ret = misc_register(&vga_led_misc_device);
@@ -128,7 +128,7 @@ static int __init vga_led_probe(struct platform_device *pdev)
 	}
 
 	/* Plot Static Ball*/
-	draw_ball(200,200)
+	draw_ball(200,200);
 	  
 	return 0;
 
