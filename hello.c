@@ -28,8 +28,8 @@ int main()
   int x_pos, x_vel, y_pos, y_vel;
 
   /* Initial Position and Velocity Vectors */
-  x_pos = 200;
-  y_pos = 200;
+  x_pos = 666;
+  y_pos = 269;
   x_vel = 1;
   y_vel = 1;
 
@@ -43,34 +43,33 @@ int main()
 
   while (1)
   {
-/*
-    x_pos = x_pos + x_vel;
-    y_pos = y_pos + y_vel;
-    
-    if (x_pos > X_MAX)
-    {
-      x_pos = X_MAX;
-      x_vel = -x_vel;
-    }
-    else if (x_pos < X_MIN)
-    {
-      x_pos = X_MIN;
-      x_vel = -x_vel;
-    }
-    
-    if (y_pos > Y_MAX)
-    {
-      y_pos = Y_MAX;
-      y_vel = -y_vel;
-    }
-    else if (y_pos < Y_MIN)
-    {
-      y_pos = Y_MIN;
-      y_vel = -y_vel;
-    }
-*/
-    write_position(x_pos, y_pos);
-    usleep(30000);    
+      x_pos = x_pos + x_vel;
+      y_pos = y_pos + y_vel;
+      
+      if (x_pos > X_MAX)
+      {
+	  x_pos = X_MAX;
+	  x_vel = -x_vel;
+      }
+      else if (x_pos < X_MIN)
+      {
+	  x_pos = X_MIN;
+	  x_vel = -x_vel;
+      }
+      
+      if (y_pos > Y_MAX)
+      {
+	  y_pos = Y_MAX;
+	  y_vel = -y_vel;
+      }
+      else if (y_pos < Y_MIN)
+      {
+	  y_pos = Y_MIN;
+	  y_vel = -y_vel;
+      }
+
+      write_position(x_pos, y_pos);
+      usleep(30000);    
   }  
 
   printf("VGA LED Userspace program terminating\n");
