@@ -55,8 +55,8 @@ static void write_coordinates(int x, int y)
     iowrite16((u16)x, dev.virtbase);
     iowrite16((u16)y, dev.virtbase + 2);
 
-    dev.coordinate[0] = x;
-    dev.coordinate[1] = y;
+    dev.coordinates[0] = x;
+    dev.coordinates[1] = y;
 }
 
 /*
