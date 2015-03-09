@@ -62,7 +62,7 @@ int main()
       y_pos = Y_MAX;
       y_vel = -y_vel;
     }
-    else if (y < Y_MIN)
+    else if (y_pos < Y_MIN)
     {
       y_pos = Y_MIN;
       y_vel = -y_vel;
