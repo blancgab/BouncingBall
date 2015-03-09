@@ -15,38 +15,9 @@
 #include <string.h>
 #include <unistd.h>
 
+void write_position(int, int);
+
 int vga_led_fd;
-
-/* Read and print the segment values */
-void print_segment_info() {
-  vga_led_arg_t vla;
-  int i;
-
-  for (i = 0 ; i < VGA_LED_DIGITS ; i++) {
-    vla.digit = i;
-    if (ioctl(vga_led_fd, VGA_LED_READ_DIGIT, &vla)) {
-      perror("ioctl(VGA_LED_READ_DIGIT) failed");
-      return;
-    }
-    printf("%02x ", vla.segments);
-  }
-  printf("\n");
-}
-
-/* Write the contents of the array to the display */
-void write_segments(const unsigned char segs[8])
-{
-  vga_led_arg_t vla;
-  int i;
-  for (i = 0 ; i < VGA_LED_DIGITS ; i++) {
-    vla.digit = i;
-    vla.segments = segs[i];
-    if (ioctl(vga_led_fd, VGA_LED_WRITE_DIGIT, &vla)) {
-      perror("ioctl(VGA_LED_WRITE_DIGIT) failed");
-      return;
-    }
-  }
-}
 
 int main()
 {
@@ -54,32 +25,67 @@ int main()
   int i;
   static const char filename[] = "/dev/vga_led";
 
-  static unsigned char message[8] = { 0x39, 0x6D, 0x79, 0x79,
-				      0x66, 0x7F, 0x66, 0x3F };
+  int x_pos, x_vel, y_pos, y_vel;
+
+  /* Initial Position and Velocity Vectors */
+  x_pos = 200;
+  y_pos = 200;
+  x_vel = 1;
+  y_vel = 1;
 
   printf("VGA LED Userspace program started\n");
 
-  if ( (vga_led_fd = open(filename, O_RDWR)) == -1) {
+  if ((vga_led_fd = open(filename, O_RDWR)) == -1) 
+  {
     fprintf(stderr, "could not open %s\n", filename);
     return -1;
   }
 
-  printf("initial state: ");
-  print_segment_info();
+  while (1)
+  {
+    x_pos = x_pos + x_vel;
+    y_pos = y_pos + y_vel;
+    
+    if (x_pos > X_MAX)
+    {
+      x_pos = X_MAX;
+      x_vel = -x_vel;
+    }
+    else if (x_pos < X_MIN)
+    {
+      x_pos = X_MIN;
+      x_vel = -x_vel;
+    }
+    
+    if (y_pos > Y_MAX)
+    {
+      y_pos = Y_MAX;
+      y_vel = -y_vel;
+    }
+    else if (y < Y_MIN)
+    {
+      y_pos = Y_MIN;
+      y_vel = -y_vel;
+    }
 
-  write_segments(message);
+    write_position(x_pos, y_pos);
+    usleep(400000);    
+  }  
 
-  printf("current state: ");
-  print_segment_info();
-
-  for (i = 0 ; i < 24 ; i++) {
-    unsigned char c0 = message[0];
-    memmove(message, message+1, VGA_LED_DIGITS - 1);
-    message[VGA_LED_DIGITS - 1] = c0;
-    write_segments(message);
-    usleep(400000);
-  }
-  
   printf("VGA LED Userspace program terminating\n");
   return 0;
+}
+
+void write_position(int x, int y)
+{
+  vga_led_arg_t vla;  
+  printf("BALL POSITION (%d, %d)\n", x, y);
+  vla.x = x;
+  vla.y = y;
+
+  if (ioctl(vga_led_fd, VGA_LED_DRAW_BALL, &vla))
+  {
+    perror("ioctl(VGA_LED_DRAW_BALL) failed");
+    return;
+  }
 }

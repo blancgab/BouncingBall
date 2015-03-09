@@ -39,20 +39,22 @@
 /*
  * Information about our device
  */
-struct vga_led_dev {
-	struct resource res; /* Resource: our registers */
-	void __iomem *virtbase; /* Where registers can be accessed in memory */
-	u8 segments[VGA_LED_DIGITS];
+struct vga_led_dev 
+{
+  struct resource res;          /* Resource: our registers */
+  void __iomem *virtbase;       /* Where registers can be accessed in memory */
+  int coordinates[2];           /* 2 Element Array of x & y coordinates */
 } dev;
 
 /*
  * Write segments of a single digit
  * Assumes digit is in range and the device information has been set up
  */
-static void write_digit(int digit, u8 segments)
-{
-	iowrite8(segments, dev.virtbase + digit);
-	dev.segments[digit] = segments;
+static void draw_ball(int x, int y)
+{  
+  int c[2] = {x,y};
+  iowrite8(c, dev.virtbase);
+  dev.coordinates = c;
 }
 
 /*
@@ -60,37 +62,24 @@ static void write_digit(int digit, u8 segments)
  * Read or write the segments on single digits.
  * Note extensive error checking of arguments
  */
-static long vga_led_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
+static long 
+vga_led_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 {
-	vga_led_arg_t vla;
-
-	switch (cmd) {
-	case VGA_LED_WRITE_DIGIT:
-		if (copy_from_user(&vla, (vga_led_arg_t *) arg,
-				   sizeof(vga_led_arg_t)))
-			return -EACCES;
-		if (vla.digit > 8)
-			return -EINVAL;
-		write_digit(vla.digit, vla.segments);
-		break;
-
-	case VGA_LED_READ_DIGIT:
-		if (copy_from_user(&vla, (vga_led_arg_t *) arg,
-				   sizeof(vga_led_arg_t)))
-			return -EACCES;
-		if (vla.digit > 8)
-			return -EINVAL;
-		vla.segments = dev.segments[vla.digit];
-		if (copy_to_user((vga_led_arg_t *) arg, &vla,
-				 sizeof(vga_led_arg_t)))
-			return -EACCES;
-		break;
-
-	default:
-		return -EINVAL;
-	}
-
-	return 0;
+  vga_led_arg_t vla;
+  
+  switch (cmd) 
+  {
+    case VGA_LED_DRAW_BALL:
+      if (copy_from_user(&vla, (vga_led_arg_t *) arg, sizeof(vga_led_arg_t)))
+	return -EACCES;
+      draw_ball(vla.x, vla.y);
+      break;
+    
+    default:
+      return -EINVAL;
+  }
+  
+  return 0;
 }
 
 /* The operations our device knows how to do */
@@ -112,8 +101,6 @@ static struct miscdevice vga_led_misc_device = {
  */
 static int __init vga_led_probe(struct platform_device *pdev)
 {
-	static unsigned char welcome_message[VGA_LED_DIGITS] = {
-		0x3E, 0x7D, 0x77, 0x08, 0x38, 0x79, 0x5E, 0x00};
 	int i, ret;
 
 	/* Register ourselves as a misc device: creates /dev/vga_led */
@@ -140,10 +127,9 @@ static int __init vga_led_probe(struct platform_device *pdev)
 		goto out_release_mem_region;
 	}
 
-	/* Display a welcome message */
-	for (i = 0; i < VGA_LED_DIGITS; i++)
-		write_digit(i, welcome_message[i]);
-
+	/* Plot Static Ball*/
+	draw_ball(200,200)
+	  
 	return 0;
 
 out_release_mem_region:

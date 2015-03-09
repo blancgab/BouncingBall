@@ -3,17 +3,19 @@
 
 #include <linux/ioctl.h>
 
-#define VGA_LED_DIGITS 8
+#define X_MAX 1279
+#define X_MIN 0
+#define Y_MAX 479
+#define Y_MIN 0
 
 typedef struct {
-  unsigned char digit;    /* 0, 1, .. , VGA_LED_DIGITS - 1 */
-  unsigned char segments; /* LSB is segment a, MSB is decimal point */
+  int x;  
+  int y;
 } vga_led_arg_t;
 
 #define VGA_LED_MAGIC 'q'
 
 /* ioctls and their arguments */
-#define VGA_LED_WRITE_DIGIT _IOW(VGA_LED_MAGIC, 1, vga_led_arg_t *)
-#define VGA_LED_READ_DIGIT  _IOWR(VGA_LED_MAGIC, 2, vga_led_arg_t *)
+#define VGA_LED_DRAW_BALL _IOW(VGA_LED_MAGIC, 1, vga_led_arg_t *)
 
 #endif
