@@ -43,6 +43,7 @@ int main()
 
   while (1)
   {
+/*
     x_pos = x_pos + x_vel;
     y_pos = y_pos + y_vel;
     
@@ -67,9 +68,9 @@ int main()
       y_pos = Y_MIN;
       y_vel = -y_vel;
     }
-
+*/
     write_position(x_pos, y_pos);
-    usleep(400000);    
+    usleep(30000);    
   }  
 
   printf("VGA LED Userspace program terminating\n");
