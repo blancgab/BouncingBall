@@ -3,9 +3,9 @@
 
 #include <linux/ioctl.h>
 
-#define X_MAX 1279
+#define X_MAX 1259
 #define X_MIN 0
-#define Y_MAX 479
+#define Y_MAX 459
 #define Y_MIN 0
 
 typedef struct {

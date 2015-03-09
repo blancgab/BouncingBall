@@ -69,7 +69,7 @@ int main()
 	}
 	
 	write_position(x_pos, y_pos);
-	usleep(30000);    
+	usleep(10000);    
     }  
     
     printf("VGA LED Userspace program terminating\n");
